@@ -1,6 +1,6 @@
 package com.grensil.algorithmsolution
 
-import org.junit.Assert.*
+import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
 /**
@@ -9,53 +9,44 @@ import org.junit.Test
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
 
     @Test
     fun binaryTransferTest() {
-        val s = 1025
+        val s1 = "110010101001"
+        val result1 = solution1(s1)
+        assertEquals(result1,listOf(3,8))
 
-        val result = getBinaryInt(s)
-        println("result : $result")
+        val s2 = "01110"
+        val result2 = solution1(s2)
+        assertEquals(result2,listOf(3,3))
+
+        val s3 = "1111111"
+        val result3 = solution1(s3)
+        assertEquals(result3,listOf(4,1))
+
     }
 }
 
-fun solution(s: String): List<Int> {
-    var answer: IntArray = intArrayOf()
+// [이진 변환 횟수 , 사라진 0 숫자]
+fun solution1(s: String): List<Int> {
+
+    fun binaryTransfer(binaryString: String): String {
+        val length = binaryString.length
+        return length.toString(2)  // 🔧 이게 가장 안전!
+    }
+
     var count = 0
-    var filteredString = s.replace("0", "")
-    var answer_count = s.length - filteredString.length
-    //s가 1이 아닌 동안
-    //이진 변환
-    while (filteredString != "1") {
-        filteredString = binaryTransfer(filteredString)
+    var disapperZeroCount = 0
+    var originString = s
+
+    while (originString != "1") {
+        disapperZeroCount += originString.count { it == '0' }
+        originString = originString.replace("0", "")
+        val resultString = binaryTransfer(originString)  // 2진법 변환
+
+        originString = resultString
         count += 1
     }
-    return listOf(answer_count, count)
+    return listOf(count, disapperZeroCount)
 }
 
-//"1111" -> "100"으로  변환하는 메소드
-fun binaryTransfer(binaryString: String): String {
-    //글자 4
-    val length = binaryString.length
-    val binaryResult = getBinaryInt(length)
-    val binaryString = binaryResult.toString()
-    return binaryString
-}
-
-//8 -> 1000 단순 이진법 변환 메소드
-fun getBinaryInt(length: Int): List<Int> {
-    val resultList = mutableListOf<Int>()
-    var num = length
-
-    while (num != 1) {
-        resultList.add(num % 2) // 나머지를 저장
-        num /= 2               // 2로 나눔
-    }
-    resultList.add(1) // 마지막 1 추가
-
-    return resultList.reversed() // 올바른 순서를 위해 뒤집어서 반환
-}
