@@ -36,6 +36,56 @@ class ExampleUnitTest {
         val result2 = solution2(n2)
         assertEquals(result2,1232586)
     }
+
+    @Test
+    fun jadenCaseTest() {
+        val s1 = "3people unFollowed me"
+        val result1 = solution3(s1)
+        assertEquals(result1,"3people Unfollowed Me")
+
+        val s2 = "for the last week"
+        val result2 = solution3(s2)
+        assertEquals(result2,"For The Last Week")
+    }
+
+
+}
+
+
+fun solution3(s: String): String {
+    return s.split(" ").joinToString(" ") { word ->
+        if (word.isEmpty()) {
+            ""
+        } else {
+            if (word[0].isLetter()) {
+                word[0].uppercaseChar() + word.substring(1).lowercase()
+            } else {
+                word.lowercase()
+            }
+        }
+    }
+}
+
+fun solution2(n: Int): Int {
+
+    val map = mutableMapOf<Int,Int>()
+
+    fun fibonacci(x: Int) : Int {
+        return (map[x - 1]!! + map[x - 2]!!) % 1234567
+    }
+
+    fun makeFibonacciMap(x : Int)  {
+        if(map.contains(n)) return
+        else if(x == 0) map[0] = 0
+        else if(x == 1) map[1]  = 1
+        else map[x] = fibonacci(x)
+    }
+
+    for(x in 0..n) {
+        makeFibonacciMap(x)
+    }
+
+    return map[n]!!
 }
 
 // [이진 변환 횟수 , 사라진 0 숫자]
@@ -59,28 +109,4 @@ fun solution1(s: String): List<Int> {
         count += 1
     }
     return listOf(count, disapperZeroCount)
-}
-
-
-/** n번째 피보나치의 수를 1234567 로 나눈 나머지를 return **/
-fun solution2(n: Int): Int {
-
-    val map = mutableMapOf<Int,Int>()
-
-    fun fibonacci(x: Int) : Int {
-        return (map[x - 1]!! + map[x - 2]!!) % 1234567
-    }
-
-    fun makeFibonacciMap(x : Int)  {
-        if(map.contains(n)) return
-        else if(x == 0) map[0] = 0
-        else if(x == 1) map[1]  = 1
-        else map[x] = fibonacci(x)
-    }
-
-    for(x in 0..n) {
-        makeFibonacciMap(x)
-    }
-
-    return map[n]!!
 }
