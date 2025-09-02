@@ -48,9 +48,50 @@ class ExampleUnitTest {
         assertEquals(result2,"For The Last Week")
     }
 
+    @Test
+    fun tangerineTest() {
+        val k1 = 6
+        val tangerine1 = intArrayOf(1, 3, 2, 5, 4, 5, 2, 3)
+        val result1 = solution4(k1, tangerine1)
+        assertEquals(result1,3)
 
+        val k2 = 4
+        val tangerine2 = intArrayOf(1, 3, 2, 5, 4, 5, 2, 3)
+        val result2 = solution4(k2, tangerine2)
+        assertEquals(result2,2)
+
+        val k3 = 2
+        val tangerine3 = intArrayOf(1, 1, 1, 1, 2, 2, 2, 3)
+        val result3 = solution4(k3, tangerine3)
+        assertEquals(result3,1)
+    }
 }
 
+fun solution4(k: Int, tangerine: IntArray): Int {
+
+    var tangerineMap = mutableMapOf<Int,Int>()
+
+    for(x in 0..tangerine.size-1) {
+        if(!tangerineMap.contains(tangerine[x])) {
+            tangerineMap[tangerine[x]] = tangerine.count { it == tangerine[x] }
+        }
+    }
+    tangerineMap = tangerineMap.toSortedMap()
+
+    val tangerineCountList: MutableList<Int> = tangerineMap.values.sortedDescending().toMutableList()
+
+    var sum = 0
+    var count = 0
+    for(x in tangerineCountList) {
+        sum += x
+        count += 1
+        if(sum >= k) {
+            return count
+        }
+    }
+
+    return count
+}
 
 fun solution3(s: String): String {
     return s.split(" ").joinToString(" ") { word ->
