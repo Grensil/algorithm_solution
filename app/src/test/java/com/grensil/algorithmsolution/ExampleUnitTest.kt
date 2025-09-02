@@ -25,6 +25,17 @@ class ExampleUnitTest {
         assertEquals(result3,listOf(4,1))
 
     }
+
+    @Test
+    fun fibonacciTest() {
+        val n1 = 3
+        val result1 = solution2(n1)
+        assertEquals(result1,2)
+
+        val n2 = 155
+        val result2 = solution2(n2)
+        assertEquals(result2,1232586)
+    }
 }
 
 // [이진 변환 횟수 , 사라진 0 숫자]
@@ -50,3 +61,26 @@ fun solution1(s: String): List<Int> {
     return listOf(count, disapperZeroCount)
 }
 
+
+/** n번째 피보나치의 수를 1234567 로 나눈 나머지를 return **/
+fun solution2(n: Int): Int {
+
+    val map = mutableMapOf<Int,Int>()
+
+    fun fibonacci(x: Int) : Int {
+        return (map[x - 1]!! + map[x - 2]!!) % 1234567
+    }
+
+    fun makeFibonacciMap(x : Int)  {
+        if(map.contains(n)) return
+        else if(x == 0) map[0] = 0
+        else if(x == 1) map[1]  = 1
+        else map[x] = fibonacci(x)
+    }
+
+    for(x in 0..n) {
+        makeFibonacciMap(x)
+    }
+
+    return map[n]!!
+}
