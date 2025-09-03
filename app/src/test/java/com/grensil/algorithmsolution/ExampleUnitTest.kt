@@ -65,6 +65,31 @@ class ExampleUnitTest {
         val result3 = solution4(k3, tangerine3)
         assertEquals(result3,1)
     }
+
+    @Test
+    fun jumTest() {
+        val n1 = 4
+        val result1 = solution5(n1)
+        assertEquals(result1,5)
+
+        val n2 = 10
+        val result2 = solution5(n2)
+        assertEquals(result2,89)
+    }
+}
+
+fun solution5(n: Int): Long {
+    var answer: Long = 0
+
+    val dp = LongArray(n + 1)
+    dp[1] = 1
+    dp[2] = 2
+    for (i in 3..n) {
+        dp[i] = (dp[i - 1] + dp[i - 2])
+    }
+    answer = dp[n]
+
+    return answer
 }
 
 fun solution4(k: Int, tangerine: IntArray): Int {
