@@ -5,51 +5,100 @@ import org.junit.Test
 
 class DPSolution {
 
-    @Test
-    fun binaryTransferTest() {
-        val s1 = 18
-        val result1 = sugarDeliveryDP(s1)
-        assertEquals(result1,4)
-
-        val s2 = 4
-        val result2 = sugarDeliveryDP(s2)
-        assertEquals(result2,-1)
-
-        val s3 = 6
-        val result3 = sugarDeliveryDP(s3)
-        assertEquals(result3,2)
-
-        val s4 = 9
-        val result4 = sugarDeliveryDP(s4)
-        assertEquals(result4,3)
-
-        val s5 = 11
-        val result5 = sugarDeliveryDP(s5)
-        assertEquals(result5,3)
+    // ==================== 도둑질 (Level 4) ====================
+    // 원형으로 배치된 집에서 인접하지 않게 털 수 있는 최댓값 반환
+    // dp[i] = i번째 집까지 고려했을 때 최대 금액
+    // TODO: 미완성
+    fun solution4(money: IntArray): Int {
+        return 0
     }
-}
 
-fun sugarDeliveryGreedy(n : Int) : Int {
-
-    for(x in n/5 downTo 0) {
-        val remain = n - (x*5)
-        if(remain % 3 ==0) {
-            val y = remain / 3
-            return x + y
+    // ==================== 타일 장식물 (Level 3) ====================
+    // 피보나치 수열로 구성된 타일의 둘레 길이 반환 (mod 1234567)
+    // dpArray[n+1] = 피보나치(n+1), 둘레 = 가로 + 세로 = fib(n) + fib(n+1)
+    fun solution(n: Int): Int {
+        val dpArray = IntArray(n + 2)
+        dpArray[1] = 0
+        dpArray[2] = 1
+        for (x in 3 until dpArray.size) {
+            dpArray[x] = dpArray[x - 2] + dpArray[x - 1]
         }
-    }
-    return -1
-}
-
-fun sugarDeliveryDP(n : Int) : Int {
-    val dp = IntArray(n + 1) { Int.MAX_VALUE }  // ✅ 불가능한 값으로 초기화
-    dp[0] = 0  // 0kg은 0개 봉지로 가능
-
-    for (i in 0..n) {
-        if (dp[i] == Int.MAX_VALUE) continue  // ✅ 불가능한 경우 스킵
-        if (i + 3 <= n) dp[i + 3] = minOf(dp[i + 3], dp[i] + 1)  // ✅ 최소값
-        if (i + 5 <= n) dp[i + 5] = minOf(dp[i + 5], dp[i] + 1)  // ✅ 최소값
+        return dpArray[n + 1] % 1234567
     }
 
-    return if (dp[n] == Int.MAX_VALUE) -1 else dp[n]
+    // ==================== 2*n 타일링 (Level 3) ====================
+    // 2*n 크기 공간을 2*1 타일로 채우는 경우의 수 반환 (mod 1234567)
+    // dp[n] = dp[n-1] + dp[n-2]
+    fun dpSolution(n: Int): Int {
+        if (n <= 2) return n
+        val dpArray = IntArray(n + 1)
+        dpArray[1] = 1
+        dpArray[2] = 2
+        for (x in 3..n) {
+            dpArray[x] = (dpArray[x - 2] + dpArray[x - 1]) % 1234567
+        }
+        return dpArray[n]
+    }
+
+    // ==================== N으로 표현 (Level 3) ====================
+    // N과 사칙연산만으로 number를 만들 때 필요한 최소 N 사용 횟수 반환
+    // dp[k] = N을 k번 사용해서 만들 수 있는 숫자 집합
+    fun dpSolution2(N: Int, number: Int): Int {
+        val dp = List(9) { mutableSetOf<Int>() }
+
+        for (k in 1..8) {
+            // 연속수 (N, NN, NNN...) 추가
+            dp[k].add(getNumber(N, k))
+
+            // i번 + j번 조합으로 k번 채우기
+            for (i in 1 until k) {
+                val j = k - i
+                for (num1 in dp[i]) {
+                    for (num2 in dp[j]) {
+                        dp[k].add(num1 + num2)
+                        dp[k].add(num1 - num2)
+                        dp[k].add(num1 * num2)
+                        if (num2 != 0) dp[k].add(num1 / num2)
+                    }
+                }
+            }
+
+            if (dp[k].contains(number)) return k
+        }
+
+        return -1
+    }
+
+    private fun getNumber(N: Int, repeat: Int): Int {
+        return N.toString().repeat(repeat).toInt()
+    }
+
+    // ==================== 테스트 ====================
+
+    @Test
+    fun testSolution4() {
+        // TODO: solution4 구현 후 활성화
+        // assertEquals(4, solution4(intArrayOf(1, 2, 3, 1)))
+    }
+
+    @Test
+    fun testSolution() {
+        assertEquals(1, solution(2))
+        assertEquals(2, solution(3))
+        assertEquals(3, solution(4))
+    }
+
+    @Test
+    fun testDpSolution() {
+        assertEquals(1, dpSolution(1))
+        assertEquals(2, dpSolution(2))
+        assertEquals(3, dpSolution(3))
+        assertEquals(5, dpSolution(4))
+    }
+
+    @Test
+    fun testDpSolution2() {
+        assertEquals(4, dpSolution2(5, 12))
+        assertEquals(2, dpSolution2(5, 55))
+    }
 }
