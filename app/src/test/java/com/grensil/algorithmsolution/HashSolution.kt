@@ -36,6 +36,49 @@ class HashSolution {
         return participantMap.filter { (_, count) -> count > 0 }.keys.first()
     }
 
+    // ==================== 신고 결과 받기 (Level 1) ====================
+    // 각 유저가 처리 결과 메일을 받은 횟수를 id_list 순서대로 반환
+    // - 동일 유저에 대한 중복 신고는 1회로 처리
+    // - k번 이상 신고된 유저는 정지, 해당 유저를 신고한 모든 유저에게 메일 발송
+    fun solution3(idList: MutableList<String>, report: MutableList<String>, k: Int): IntArray {
+
+        //id_list	report	k	result
+        //["muzi", "frodo", "apeach", "neo"]	["muzi frodo","apeach frodo","frodo neo","muzi neo","apeach muzi"]	2	[2,1,1,0]
+        //["con", "ryan"]	["ryan con", "ryan con", "ryan con", "ryan con"]	3	[0,0]
+
+        //reportedMap  신고 당한 횟수 -> frodo 2 , neo 2 muzi 1
+
+        // 신고 한 사람 reporterMap  muzi -> [frodo,neo] , frodo -> [neo] , appeach -> [frodo,muzi], neo -> []
+
+        //그러면 위 두개의 map 을 가지고 hashMap 에서의 값이 k 보다 큰 사람만 frodo 를 신고한 사람 muzi,apeeach +=1
+
+        val reportedMap = HashMap<String, Int>()
+        val reporterMap = HashMap<String, MutableList<String>>()
+        val resultArray = IntArray(idList.size)
+
+        for (name in report) {
+            val (reporter, reported) = name.split(" ")
+            val list = reporterMap.getOrPut(reporter) { mutableListOf() }
+            if (!list.contains(reported)) {  // 중복 체크
+                list.add(reported)
+                reportedMap[reported] = (reportedMap[reported] ?: 0) + 1
+            }
+        }
+
+        for (i in idList.indices) {
+            val name = idList[i]
+            if ((reportedMap[name] ?: 0) >= k) {
+                reporterMap.forEach { (reporter, reported) ->
+                    if (reported.contains(name)) {
+                        resultArray[idList.indexOf(reporter)] += 1
+                    }
+                }
+            }
+        }
+
+        return resultArray
+    }
+
     // ==================== 테스트 ====================
 
     @Test
@@ -47,8 +90,43 @@ class HashSolution {
 
     @Test
     fun testHashSolution2() {
-        assertEquals("leo", solution2(mutableListOf("leo", "kiki", "eden"), mutableListOf("eden", "kiki")))
-        assertEquals("vinko", solution2(mutableListOf("marina", "josipa", "nikola", "vinko", "filipa"), mutableListOf("josipa", "filipa", "marina", "nikola")))
-        assertEquals("mislav", solution2(mutableListOf("mislav", "stanko", "mislav", "ana"), mutableListOf("stanko", "ana", "mislav")))
+        assertEquals(
+            "leo",
+            solution2(mutableListOf("leo", "kiki", "eden"), mutableListOf("eden", "kiki"))
+        )
+        assertEquals(
+            "vinko",
+            solution2(
+                mutableListOf("marina", "josipa", "nikola", "vinko", "filipa"),
+                mutableListOf("josipa", "filipa", "marina", "nikola")
+            )
+        )
+        assertEquals(
+            "mislav",
+            solution2(
+                mutableListOf("mislav", "stanko", "mislav", "ana"),
+                mutableListOf("stanko", "ana", "mislav")
+            )
+        )
+    }
+
+    @Test
+    fun testHashSolution3() {
+        assertEquals(
+            intArrayOf(2, 1, 1, 0).toList(),
+            solution3(
+                mutableListOf("muzi", "frodo", "apeach", "neo"),
+                mutableListOf("muzi frodo", "apeach frodo", "frodo neo", "muzi neo", "apeach muzi"),
+                2
+            ).toList()
+        )
+        assertEquals(
+            intArrayOf(0, 0).toList(),
+            solution3(
+                mutableListOf("con", "ryan"),
+                mutableListOf("ryan con", "ryan con", "ryan con", "ryan con"),
+                3
+            ).toList()
+        )
     }
 }
