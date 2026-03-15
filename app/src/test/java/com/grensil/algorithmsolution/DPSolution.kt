@@ -73,6 +73,37 @@ class DPSolution {
         return N.toString().repeat(repeat).toInt()
     }
 
+    // ==================== 피보나치 (Level 2) ====================
+    // n번째 피보나치 수 반환 (mod 1234567)
+    fun fibonacciSolution(n: Int): Int {
+        val map = mutableMapOf<Int, Int>()
+
+        fun fibonacci(x: Int): Int = (map[x - 1]!! + map[x - 2]!!) % 1234567
+
+        fun makeFibonacciMap(x: Int) {
+            if (map.contains(n)) return
+            else if (x == 0) map[0] = 0
+            else if (x == 1) map[1] = 1
+            else map[x] = fibonacci(x)
+        }
+
+        for (x in 0..n) makeFibonacciMap(x)
+        return map[n]!!
+    }
+
+    // ==================== 점프와 순간이동 (Level 3) ====================
+    // n칸을 이동할 때 건전지 사용 횟수(점프 횟수) 최솟값 반환
+    // dp[n] = dp[n-1] + dp[n-2] (순간이동 활용)
+    fun jumpSolution(n: Int): Long {
+        val dp = LongArray(n + 1)
+        dp[1] = 1
+        dp[2] = 2
+        for (i in 3..n) {
+            dp[i] = dp[i - 1] + dp[i - 2]
+        }
+        return dp[n]
+    }
+
     // ==================== 테스트 ====================
 
     @Test
@@ -100,5 +131,17 @@ class DPSolution {
     fun testDpSolution2() {
         assertEquals(4, dpSolution2(5, 12))
         assertEquals(2, dpSolution2(5, 55))
+    }
+
+    @Test
+    fun testFibonacciSolution() {
+        assertEquals(2, fibonacciSolution(3))
+        assertEquals(1232586, fibonacciSolution(155))
+    }
+
+    @Test
+    fun testJumpSolution() {
+        assertEquals(5L, jumpSolution(4))
+        assertEquals(89L, jumpSolution(10))
     }
 }
