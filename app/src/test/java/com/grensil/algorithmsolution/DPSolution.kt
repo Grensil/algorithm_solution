@@ -104,44 +104,51 @@ class DPSolution {
         return dp[n]
     }
 
+    // ==================== 2*n 타일링 2 (Level 3) ====================
+    // 2*n 바닥을 1*2 타일로 채우는 경우의 수 반환 (mod 1,000,000,007)
+    // dp[n] = dp[n-1] + dp[n-2]
+    fun tilingSolution(n: Int): Int {
+        if (n <= 2) return n
+        val dp = IntArray(n + 1)
+        dp[1] = 1
+        dp[2] = 2
+        for (i in 3..n) {
+            dp[i] = (dp[i - 2] + dp[i - 1]) % 1000000007
+        }
+        return dp[n]
+    }
+
     // ==================== 테스트 ====================
 
     @Test
-    fun testSolution4() {
-        // TODO: solution4 구현 후 활성화
-        // assertEquals(4, solution4(intArrayOf(1, 2, 3, 1)))
-    }
-
-    @Test
-    fun testSolution() {
+    fun testDPSolution() {
+        // 타일 장식물
         assertEquals(1, solution(2))
         assertEquals(2, solution(3))
         assertEquals(3, solution(4))
-    }
 
-    @Test
-    fun testDpSolution() {
+        // 2*n 타일링
         assertEquals(1, dpSolution(1))
         assertEquals(2, dpSolution(2))
         assertEquals(3, dpSolution(3))
         assertEquals(5, dpSolution(4))
-    }
 
-    @Test
-    fun testDpSolution2() {
+        // N으로 표현
         assertEquals(4, dpSolution2(5, 12))
         assertEquals(2, dpSolution2(5, 55))
-    }
 
-    @Test
-    fun testFibonacciSolution() {
+        // 피보나치
         assertEquals(2, fibonacciSolution(3))
         assertEquals(1232586, fibonacciSolution(155))
-    }
 
-    @Test
-    fun testJumpSolution() {
+        // 점프와 순간이동
         assertEquals(5L, jumpSolution(4))
         assertEquals(89L, jumpSolution(10))
+
+        // 2*n 타일링 2
+        assertEquals(5, tilingSolution(4))
+
+        // 도둑질 (TODO: 구현 후 활성화)
+        // assertEquals(4, solution4(intArrayOf(1, 2, 3, 1)))
     }
 }
